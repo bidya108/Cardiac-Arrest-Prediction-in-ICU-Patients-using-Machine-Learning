@@ -1,4 +1,4 @@
-# 🏥 Cardiac Arrest Prediction in ICU Patients
+# Cardiac Arrest Prediction in ICU Patients
 
 ## 📌 Overview
 This project builds a machine learning-based system to predict the risk of cardiac arrest in ICU patients using clinical data from the MIMIC-IV dataset. The goal is to assist early detection and improve clinical decision-making.
