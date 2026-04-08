@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cardiac Arrest Predictor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>🚑 ICU Cardiac Arrest Risk Predictor</h2>
+        <p>Enter patient vital signs below to assess risk.</p>
+
+        <form method="POST" action="/predict">
+            <label for="name">Patient Name:</label>
+            <input type="text" name="name" required><br>
+
+            <label for="hr">Heart Rate (HR):</label>
+            <input type="number" name="hr" step="0.1" required><br>
+
+            <label for="map">Mean Arterial Pressure (MAP):</label>
+            <input type="number" name="map" step="0.1" required><br>
+
+            <label for="sbp">Systolic Blood Pressure (SBP):</label>
+            <input type="number" name="sbp" step="0.1" required><br>
+
+            <button type="submit">Predict Risk</button>
+        </form>
+
+        {% if result %}
+            <div class="result {{ 'result-danger' if 'Risk' in result else 'result-safe' }}">
+                <h3>Prediction Result for {{ name }}:</h3>
+                <p>{{ result }}</p>
+            </div>
+
+            <canvas id="vitalChart" width="400" height="250"></canvas>
+            <script>
+                const ctx = document.getElementById('vitalChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Heart Rate', 'MAP', 'SBP'],
+                        datasets: [{
+                            label: 'Patient Vital Signs',
+                            data: [{{ hr }}, {{ map }}, {{ sbp }}],
+                            backgroundColor: ['#1976d2', '#4db6ac', '#e57373'],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Patient Vital Signs',
+                                font: { size: 18 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+
+            <form method="POST" action="/download">
+                <input type="hidden" name="name" value="{{ name }}">
+                <input type="hidden" name="hr" value="{{ hr }}">
+                <input type="hidden" name="map" value="{{ map }}">
+                <input type="hidden" name="sbp" value="{{ sbp }}">
+                <button type="submit">📄 Download PDF Report</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>
